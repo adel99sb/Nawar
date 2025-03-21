@@ -1,27 +1,24 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Features;
+﻿using Infrastructure.Configuration;
+using Infrastructure.Core.Entities;
+using Infrastructure.Core.Interfaces.Application.EntityServices;
+using Infrastructure.Core.Interfaces.Application.UtilityServices;
+using Infrastructure.Core.Interfaces.Infrastructure;
+using Infrastructure.Data;
+using Infrastructure.Repositories;
+using IT_Automation.API.Application.EntityServices;
+using IT_Automation.API.Application.UtilityServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Nawar.API.Application.EntityServices;
-using Nawar.API.Application.UtilityServices;
-using Nawar.API.Attributes;
-using Nawar.API.Core.Entities;
-using Nawar.API.Core.Interfaces.Application.EntityServices;
-using Nawar.API.Core.Interfaces.Application.UtilityServices;
-using Nawar.API.Core.Interfaces.Infrastructure;
-using Nawar.API.Infrastructure.Configuration;
-using Nawar.API.Infrastructure.Data;
-using Nawar.API.Infrastructure.Repositories;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace Nawar.API
+namespace IT_Automation.API
 {
     public static class ServiceCollectionExtensions
     {
@@ -34,15 +31,25 @@ namespace Nawar.API
 
             services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
             {
+                // إعدادات كلمة المرور
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
-                options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = true;
                 options.Password.RequiredLength = 8;
+                options.Password.RequiredUniqueChars = 3;
+                options.Password.RequireNonAlphanumeric = true;
 
+                // إعدادات القفل بعد المحاولات الفاشلة
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
                 options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
 
+                // إعدادات تسجيل الدخول
+                options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedPhoneNumber = false;
+                options.SignIn.RequireConfirmedAccount = true;
+
+                // إعدادات المستخدم
                 options.User.RequireUniqueEmail = true;
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -123,43 +130,43 @@ namespace Nawar.API
                     Scheme = "Bearer"
                 });
 
-                // Require both API Key and Bearer Token for all endpoints
-                option.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        new string[] {}
-                    }
-                });
+                //// Require both API Key and Bearer Token for all endpoints
+                //option.AddSecurityRequirement(new OpenApiSecurityRequirement
+                //{
+                //    {
+                //        new OpenApiSecurityScheme
+                //        {
+                //            Reference = new OpenApiReference
+                //            {
+                //                Type = ReferenceType.SecurityScheme,
+                //                Id = "Bearer"
+                //            }
+                //        },
+                //        new string[] {}
+                //    }
+                //});
             });
 
-            // Dynamic Authorization Policies
-            var authorizationPolicies = configuration.GetSection("AuthorizationPolicies").Get<Dictionary<string, Dictionary<string, object>>>();
-            services.AddAuthorization(options =>
-            {
-                foreach (var policy in authorizationPolicies)
-                {
-                    var policyName = policy.Key;
-                    var conditions = policy.Value;
+            //// Dynamic Authorization Policies
+            //var authorizationPolicies = configuration.GetSection("AuthorizationPolicies").Get<Dictionary<string, Dictionary<string, object>>>();
+            //services.AddAuthorization(options =>
+            //{
+            //    foreach (var policy in authorizationPolicies)
+            //    {
+            //        var policyName = policy.Key;
+            //        var conditions = policy.Value;
 
-                    options.AddPolicy(policyName, builder =>
-                        builder.Requirements.Add(new DynamicAuthorizationRequirement(policyName, conditions)));
-                }
-            });
+            //        options.AddPolicy(policyName, builder =>
+            //            builder.Requirements.Add(new DynamicAuthorizationRequirement(policyName, conditions)));
+            //    }
+            //});
 
-            services.AddSingleton<IAuthorizationHandler, DynamicAuthorizationHandler>(); // Register the dynamic authorization handler
+            //services.AddSingleton<IAuthorizationHandler, DynamicAuthorizationHandler>(); // Register the dynamic authorization handler
             // Configure file upload size limits for multipart forms
-            services.Configure<FormOptions>(options =>
-            {
-                options.MultipartBodyLengthLimit = 10 * 1024 * 1024;  // 10 MB file size limit
-            });
+            //services.Configure<FormOptions>(options =>
+            //{
+            //    options.MultipartBodyLengthLimit = 10 * 1024 * 1024;  // 10 MB file size limit
+            //});
 
             // Enable ProblemDetails for standardized error responses
             services.AddProblemDetails();

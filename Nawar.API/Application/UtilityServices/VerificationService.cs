@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Nawar.API.Core.Interfaces.Application.UtilityServices;
+﻿using Infrastructure.Core.Interfaces.Application.UtilityServices;
+using Microsoft.Extensions.Caching.Memory;
 
-namespace Nawar.API.Application.UtilityServices
+namespace IT_Automation.API.Application.UtilityServices
 {
     public class VerificationService : IVerificationService
     {
@@ -21,7 +21,7 @@ namespace Nawar.API.Application.UtilityServices
             // إرسال البريد الإلكتروني
             await _emailService.SendEmailAsync(email, subject, $"Your verification code is {verificationCode}");
 
-            // تخزين الرمز في Cache (أو قاعدة البيانات)
+            // تخزين الرمز في Cache )
             _cache.Set($"VerificationCode_{userId}", verificationCode, TimeSpan.FromMinutes(10));
         }
         public async Task SendVerificationCodeAsync(Guid userId, string email, string subject, string token)

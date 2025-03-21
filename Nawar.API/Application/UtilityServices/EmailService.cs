@@ -1,9 +1,9 @@
-﻿using Nawar.API.Core.Interfaces.Application.UtilityServices;
-using Nawar.API.Infrastructure.Configuration;
-using System.Net.Mail;
+﻿using Infrastructure.Configuration;
+using Infrastructure.Core.Interfaces.Application.UtilityServices;
 using System.Net;
+using System.Net.Mail;
 
-namespace Nawar.API.Application.UtilityServices
+namespace IT_Automation.API.Application.UtilityServices
 {
     public class EmailService : IEmailService
     {

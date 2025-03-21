@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Infrastructure.Configuration;
+using Infrastructure.Core.Entities;
+using Infrastructure.Core.Interfaces.Application.UtilityServices;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using Nawar.API.Core.Entities;
-using Nawar.API.Core.Interfaces.Application.UtilityServices;
-using Nawar.API.Infrastructure.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Nawar.API.Application.UtilityServices
+namespace IT_Automation.API.Application.UtilityServices
 {
     public class JwtService : IJwtService
     {

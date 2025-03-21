@@ -1,7 +1,7 @@
+using Infrastructure.Core.Entities;
+using Infrastructure.Repositories;
+using IT_Automation.API;
 using Microsoft.AspNetCore.Identity;
-using Nawar.API;
-using Nawar.API.Core.Entities;
-using Nawar.API.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

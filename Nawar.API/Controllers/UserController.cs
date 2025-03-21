@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Infrastructure.Core.DTOs.Requestes;
+using Infrastructure.Core.Interfaces.Application.EntityServices;
+using IT_Automation.API.Application.UtilityServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Nawar.API.Application.UtilityServices;
-using Nawar.API.Core.DTOs.Requestes;
-using Nawar.API.Core.Interfaces.Application.EntityServices;
 
-namespace Nawar.API.Controllers
+namespace IT_Automation.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -14,7 +14,7 @@ namespace Nawar.API.Controllers
         public UserController(IUserService userService)
         {
             this.userService = userService;
-        }                
+        }
         [HttpPost("Login")]
         public async Task<IActionResult> LoginAsync(LoginRequestDto loginRequest)
         {
@@ -94,6 +94,29 @@ namespace Nawar.API.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+        [Authorize]
+        [HttpGet("profile")]
+        public IActionResult Profile()
+        {
+            if (User.IsInRole("Student"))
+            {
+                return Ok("أنت طالب!");
+            }
+            else if (User.IsInRole("Professor"))
+            {
+                return Ok("أنت دكتور!");
+            }
+            else
+            {
+                return Forbid();
+            }
+        }
+        [Authorize(Roles = "Student,Professor")]
+        [HttpGet("dashboard")]
+        public IActionResult Dashboard()
+        {
+            return Ok("مرحبًا، لديك صلاحية دخول كطالب أو كدكتور!");
         }
     }
 }

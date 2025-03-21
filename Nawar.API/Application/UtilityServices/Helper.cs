@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Nawar.API.Core.DTOs.Responses;
-using System.Linq.Expressions;
+﻿using Infrastructure.Core.DTOs.Responses;
+using Microsoft.AspNetCore.Mvc;
 using System.Net.Mail;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Claims;
 
-namespace Nawar.API.Application.UtilityServices
+namespace IT_Automation.API.Application.UtilityServices
 {
     public static class Helper
     {
